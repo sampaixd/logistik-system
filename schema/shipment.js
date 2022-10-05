@@ -1,9 +1,9 @@
 import mongoose, { mongo, Schema } from "mongoose";
 
 const shipmentSchema = mongoose.Schema({
-    date: {
+    shipping_date: {
         type: date,
-        required: [true, "date required"],
+        default: Date.now
 
     },
     orders_id: {
@@ -18,6 +18,10 @@ const shipmentSchema = mongoose.Schema({
     workers_id: {
         type: [mongoose.Types.ObjectId],
         required: [true, "worker(s) required"]
+    },
+    delivered: {
+        type: Boolean,
+        default: false
     }
 })
 

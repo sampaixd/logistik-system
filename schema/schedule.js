@@ -14,6 +14,7 @@ const sheduleSchema = new mongoose.Schema({
             minLength: [5, "Invalid time format"]
         }
     },
+
     tuesday: {
         start: {
             type: String,
@@ -26,6 +27,7 @@ const sheduleSchema = new mongoose.Schema({
             minLength: [5, "Invalid time format"]
         }
     },
+
     wednesday: {
         start: {
             type: String,
@@ -38,6 +40,7 @@ const sheduleSchema = new mongoose.Schema({
             minLength: [5, "Invalid time format"]
         }
     },
+
     thursday: {
         start: {
             type: String,
@@ -50,6 +53,7 @@ const sheduleSchema = new mongoose.Schema({
             minLength: [5, "Invalid time format"]
         }
     },
+
     friday: {
         start: {
             type: String,
@@ -62,6 +66,7 @@ const sheduleSchema = new mongoose.Schema({
             minLength: [5, "Invalid time format"]
         }
     },
+
     saturday: {
         start: {
             type: String,
@@ -74,6 +79,7 @@ const sheduleSchema = new mongoose.Schema({
             minLength: [5, "Invalid time format"]
         }
     },
+
     sunday: {
         start: {
             type: String,
@@ -88,4 +94,4 @@ const sheduleSchema = new mongoose.Schema({
     },
 })
 
-export default mongoose.model("Shedule", sheduleSchema)
+export default mongoose.model("Schedule", sheduleSchema)

@@ -6,7 +6,7 @@ const orderSchema = new mongoose.Schema({
         required: [true, "customer required"]
     },
 
-    order_date: {
+    date_placed: {
         type: Date,
         default: Date.now
     },

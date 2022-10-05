@@ -1,11 +1,35 @@
 import mongoose, { Schema } from "mongoose";
+import validator from "validator";
+import { hash } from "bcryptjs"
 
 const customerSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, "name required"],
         maxLength: [50, "name cannot exceed 50 characters"]
+    },
+
+    email: {
+        type: String,
+        required: [true, "email required"],
+        unique: [true, "email already in use"],
+        validate: {
+            validator: validator.isEmail(),
+            message: "not a valid email address"
+        }
+    },
+
+    password: {
+        type: String,
+        required: [true, "password required"],
+        minLength: [8, "Password must be atleast 6 characters"],
+        maxLength: [18, "password cannot exceed 18 characters"]
     }
+})
+
+customerSchema.pre("save", async function (next) {
+    await hash(this.password, 10);
+    next();
 })
 
 export default mongoose.model("Customer", customerSchema)
