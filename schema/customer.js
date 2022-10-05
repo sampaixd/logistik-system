@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import validator from "validator";
-import { hash } from "bcryptjs"
+import crypt from "bcryptjs"
 
 const customerSchema = new mongoose.Schema({
     name: {
@@ -13,10 +13,10 @@ const customerSchema = new mongoose.Schema({
         type: String,
         required: [true, "email required"],
         unique: [true, "email already in use"],
-        validate: {
+        /*validate: {
             validator: validator.isEmail(),
             message: "not a valid email address"
-        }
+        }*/
     },
 
     password: {
@@ -28,7 +28,7 @@ const customerSchema = new mongoose.Schema({
 })
 
 customerSchema.pre("save", async function (next) {
-    await hash(this.password, 10);
+    await crypt.hash(this.password, 10);
     next();
 })
 

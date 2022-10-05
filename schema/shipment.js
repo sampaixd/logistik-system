@@ -2,7 +2,7 @@ import mongoose, { mongo, Schema } from "mongoose";
 
 const shipmentSchema = mongoose.Schema({
     shipping_date: {
-        type: date,
+        type: Date,
         default: Date.now
 
     },
