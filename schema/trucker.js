@@ -1,5 +1,6 @@
 import { stringifyStyle } from "@vue/shared";
 import mongoose, { mongo, Schema } from "mongoose";
+import schedule from "./schedule.js";
 
 const truckerSchema = new mongoose.Schema({
     location: {
@@ -11,8 +12,8 @@ const truckerSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId
     },
 
-    schedule_id: {
-        type: mongoose.Types.ObjectId,
+    schedule: {
+        type: schedule.schema,
         requred: [true, "schedule required"]
     },
 

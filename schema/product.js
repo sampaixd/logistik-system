@@ -11,11 +11,7 @@ const productSchema = new mongoose.Schema({
         required: [true, "price required"],
         max: [1000000, "Price cannot exceed 1 000 000 kr, please contact IT for help"]
     },
-    stock: {
-        type: Number,
-        required: [true, "stock required"],
-        max: [1000000, "stock cannot exceed 1 000 000, please contact IT for help"]
-    },
+
 
     shelf_number: {
         type: String,

@@ -29,6 +29,9 @@ workerRouter.post("/add", async (req, res) => {
 });
 
 function validateTime(day, dayName) {
+    if (day == undefined) {
+        return;
+    }
     let start = day.start.split(":");
     let end = day.end.split(":");
     start[0] = parseInt(start[0]);

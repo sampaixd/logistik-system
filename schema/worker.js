@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import schedule from "./schedule.js";
 
 const workerSchema = mongoose.Schema({
     name: {
@@ -6,8 +7,8 @@ const workerSchema = mongoose.Schema({
         required: [true, "name required"],
         maxLength: [100, "name cannot exceed 100 characters"]
     },
-    schedule_id: {
-        type: mongoose.Types.ObjectId,
+    schedule: {
+        type: schedule.schema,
         required: [true, "schedule required"]
     }
 })
