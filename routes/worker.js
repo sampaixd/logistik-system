@@ -3,6 +3,11 @@ import * as db from "../controllers/worker.js";
 
 const workerRouter = Router();
 
+workerRouter.get("/get", async (req, res) => {
+    const dbResponse = await db.get();
+    res.status(dbResponse[0]).send(dbResponse[1]);
+})
+
 workerRouter.post("/add", async (req, res) => {
     try {
         validateTime(req.body.schedule.monday, "monday");
@@ -53,13 +58,13 @@ function validateTime(day, dayName) {
     }
 }
 
-workerRouter.post("/update", async (req, res) => {
+workerRouter.put("/update", async (req, res) => {
     const dbResponse = await db.update(req.body.newData, req.body.id)
     console.log(dbResponse);
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-workerRouter.post("/delete", async (req, res) => {
+workerRouter.delete("/delete", async (req, res) => {
     const dbResponse = await db.remove(req.body.id)
     res.status(dbResponse[0]).send(dbResponse[1]);
 })

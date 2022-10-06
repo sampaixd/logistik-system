@@ -1,9 +1,9 @@
 import Worker from "../schema/worker.js";
 import Schedule from "../schema/schedule.js";
 
-export async function get() {
+export async function get(filter = {}) {
     try {
-        return [200, await Worker.find({})]
+        return [200, await Worker.find(filter)]
     }
     catch (err) {
         return [400, `error getting workers: ${err}`]
@@ -22,7 +22,7 @@ export async function add(worker, schedule) {
 }
 
 // newdata includes both the variable name as well as its value
-export async function update(newData, id) {
+export async function update(id, newData) {
     try {
         await Worker.findById(id).update(newData);
         return [200, "worker updated"];

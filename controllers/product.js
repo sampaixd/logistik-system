@@ -1,9 +1,9 @@
 import Product from "../schema/product.js";
 import { add, update } from "./worker.js";
 
-export async function get() {
+export async function get(filter = {}) {
     try {
-        return [200, await Product.find({})];
+        return [200, await Product.find(filter)];
     }
     catch(err) {
         return (400, `error when getting products: ${err}`);

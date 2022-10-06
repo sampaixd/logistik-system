@@ -1,8 +1,9 @@
+import order from "../schema/order.js";
 import Shipment from "../schema/shipment.js";
 
-export async function get() {
+export async function get(filter = {}) {
     try {
-        return [200, await Shipment.find({})]
+        return [200, await Shipment.find(filter)]
     }
     catch (err) {
         return [400, `error getting shipments: ${err}`]
@@ -37,4 +38,27 @@ export async function remove (id) {
     catch(err) {
         return [400, `error deleting shipment: ${err}`]
     }
+}
+
+
+// unable to test this function at the moment
+export async function getMontlySale(startOfMonth, endOfMonth) {
+    const thisMonthsShipments = await Shipment.find({ 
+        shipment_date: {
+            $gte: startOfMonth,
+            $lte: endOfMonth
+    }});
+    
+    let totalSales = 0;
+    
+    thisMonthsShipments.forEach((shipment) => {
+        shipment.orders_id.forEach((order_id) =>{
+            order.findById(order_id)
+            .then((order) => {
+                totalSales += order.price * order.amount;
+            })
+        })
+    })
+
+    return totalSales
 }

@@ -1,8 +1,8 @@
 import Customer from "../schema/customer.js";
 
-export async function get() {
+export async function get(filter = {}) {
     try {
-        return [200, await Customer.find({})]
+        return [200, await Customer.find(filter)]
     }
     catch (err) {
         return [400, `error getting customers: ${err}`]
@@ -21,7 +21,7 @@ export async function add(customer) {
 }
 
 // newdata includes both the variable name as well as its value
-export async function update(newData, id) {
+export async function update(id, newData) {
     try {
         await Customer.findOneById(id).update(newData);
         return [200, "customer updated"];

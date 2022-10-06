@@ -1,9 +1,9 @@
 import order from "../schema/order.js";
 import Order from "../schema/order.js";
 
-export async function get() {
+export async function get(filter = {}) {
     try {
-        return [200, await Order.find({})]
+        return [200, await Order.find(filter)]
     }
     catch (err) {
         return [400, `error getting orders: ${err}`]
