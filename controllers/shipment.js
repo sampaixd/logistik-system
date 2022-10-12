@@ -1,4 +1,4 @@
-import order from "../schema/order.js";
+import Order from "../schema/order.js";
 import Shipment from "../schema/shipment.js";
 
 export async function get(filter = {}) {
@@ -53,7 +53,7 @@ export async function getMontlySale(startOfMonth, endOfMonth) {
     
     thisMonthsShipments.forEach((shipment) => {
         shipment.orders_id.forEach((order_id) =>{
-            order.findById(order_id)
+            Order.findById(order_id)
             .then((order) => {
                 totalSales += order.price * order.amount;
             })

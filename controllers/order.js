@@ -1,4 +1,3 @@
-import order from "../schema/order.js";
 import Order from "../schema/order.js";
 
 export async function get(filter = {}) {

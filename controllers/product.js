@@ -1,5 +1,4 @@
 import Product from "../schema/product.js";
-import { add, update } from "./worker.js";
 
 export async function get(filter = {}) {
     try {

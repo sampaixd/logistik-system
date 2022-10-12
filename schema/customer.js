@@ -13,7 +13,7 @@ const customerSchema = new mongoose.Schema({
         type: String,
         required: [true, "email required"],
         unique: [true, "email already in use"],
-        /*validate: {
+        /*validate: { // TODO throws error of getting "undefined" without being called
             validator: validator.isEmail(),
             message: "not a valid email address"
         }*/
@@ -23,7 +23,7 @@ const customerSchema = new mongoose.Schema({
         type: String,
         required: [true, "password required"],
         minLength: [8, "Password must be atleast 6 characters"],
-        maxLength: [18, "password cannot exceed 18 characters"]
+        maxLength: [18, "password cannot exceed 18 characters"] // crypt.hash is limited to 18 characters
     }
 })
 

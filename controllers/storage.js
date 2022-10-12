@@ -1,5 +1,5 @@
 import Storage from "../schema/storage.js";
-import {add as shipmentDbAdd, get as shipmentDbGet} from "./shipment.js";
+import { add as shipmentDbCreate, get as shipmentDbGet } from "./shipment.js";
 
 export async function get(filter = {}) {
     try {
@@ -22,8 +22,8 @@ export async function add(storage) {
 
 export async function update(id, newData) {
     try {
-    await Storage.findOne({_id: id}).update(newData)
-    return [200, "storage updated"]
+        await Storage.findById(id).update(newData)
+        return [200, "storage updated"]
     }
     catch (err) {
         return [400, `error when updating storage: ${err}`]
@@ -35,24 +35,45 @@ export async function remove(id) {
         await Storage.findByIdAndDelete(id);
         return [200, "storage removed"];
     }
-    catch(err) {
+    catch (err) {
         return [400, `error removing storage: ${err}`];
     }
 }
 
-export async function addShipment(storage_id, newShipment) {
+export async function createShipment(storage_id, newShipment) {
     
-    let shipmentDbResponse = await shipmentDbAdd(newShipment);
+    let shipmentDbResponse = await shipmentDbCreate(newShipment);
     if (shipmentDbResponse[0] === 400) {
         return shipmentDbResponse
     }
-
-    shipmentDbResponse = await shipmentDbGet(newShipment);
-    if (shipmentDbResponse[0] === 400) {
-        return shipmentDbResponse
-    }
-    const shipment_id = shipmentDbResponse[1][0]._id;
-    return update(storage_id, {shipment_id: shipment_id})
+    
 }
 
+export async function asignWorker(storage_id, worker_id) {
+    try {
+        const storage = await Storage.findById(storage_id)
+        await storage.workers_id.push(worker_id);
+        storage.save();
+        return [200, "worker assigned to storage"]
+    }
+    catch(err) {
+        return [400, `error assigning worker to storage: ${err}`]
+    }
+}
+
+export async function relieveWorker(storage_id, worker_id) {
+    try {
+        const storage = await Storage.findById(storage_id);
+        storage.workers_id.pull({_id: worker_id});
+        storage.save();
+        return [200, "worker relieved from storage"];
+    }
+    catch(err) {
+        return [400, `error relieving worker: ${err}`]
+    }
+}
+
+export async function updateShipment(shipment_id, newOrder) {
+    
+}
 //TODO add products, workers, shipments
