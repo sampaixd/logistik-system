@@ -19,6 +19,10 @@ const orderSchema = new mongoose.Schema({
     amount: {
         type: Number,
         required: [true, "amount required"]
+    },
+    // nullable because the order is created before the shipment
+    shipment_id: {  
+        type: mongoose.Types.ObjectId
     }
 })
 

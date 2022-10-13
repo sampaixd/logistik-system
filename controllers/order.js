@@ -11,8 +11,8 @@ export async function get(filter = {}) {
 
 export async function add(order) {
     try {
-        await Order.create(order)
-        return [200, "order added"]
+        return await Order.create(order)
+        
     }
     catch (err) {
         return [400, `error adding order: ${err}`]

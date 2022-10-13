@@ -1,4 +1,4 @@
-import {router} from "express"
+import {Router} from "express"
 import * as db from "../controllers/trucker.js"
 
 const truckerRouter = Router();

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { mongo, Schema } from "mongoose";
 import validator from "validator";
 import crypt from "bcryptjs"
 
@@ -24,6 +24,10 @@ const customerSchema = new mongoose.Schema({
         required: [true, "password required"],
         minLength: [8, "Password must be atleast 6 characters"],
         maxLength: [18, "password cannot exceed 18 characters"] // crypt.hash is limited to 18 characters
+    },
+
+    orders_id: {
+        type: [mongoose.Types.ObjectId]
     }
 })
 

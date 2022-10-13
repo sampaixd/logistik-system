@@ -22,6 +22,10 @@ const shipmentSchema = mongoose.Schema({
     delivered: {
         type: Boolean,
         default: false
+    },
+    storage_id: {
+        type: mongoose.Types.ObjectId,
+        required: [true, "storage ID required"]
     }
 })
 

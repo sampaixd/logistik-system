@@ -40,12 +40,39 @@ export async function remove(id) {
     }
 }
 
-export async function createShipment(storage_id, newShipment) {
+export async function createShipment(orders) {
+
+    return await Storage.find({
+            "products.id": orders.id,
+    }, async function (err, suitableStorages) {
+
+        console.log(suitableStorages);
+        suitableStorages.filter((storage) => {
+            storage.products.foreach((product) => {
+                let currentProduct = ""
+                // if the current product is the product searched for,
+                //asign the product to currentProduct and continue in if statement
+                if ((currentProduct = orders.find((orderedProduct) => {
+                    orderedProduct.id === product.id}))) {
+                    return product.stock >= currentProduct.amount ? true : false; 
+                } 
+            })
+        })
     
-    let shipmentDbResponse = await shipmentDbCreate(newShipment);
-    if (shipmentDbResponse[0] === 400) {
-        return shipmentDbResponse
-    }
+        if (suitableStorages.length) {
+            let ordersId = []
+            orders.foreach((order) => { ordersId.push(order.id)})
+            shipmentDbCreate({
+                orders_id: ordersId,
+                workers_id: suitableStorages[0].workers_id[0],
+                trucker_id: "63480375455c8e9b80517d30",
+                storage_id: suitableStorages[0].id
+            })
+            return [200, "order added!"]
+        } else {
+            return [400, "could not add order"]
+        }
+    });
     
 }
 

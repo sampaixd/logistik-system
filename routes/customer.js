@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as customerDb from "../controllers/customer.js";
 import * as orderDb from "../controllers/order.js";
+import { createShipment } from "../controllers/storage.js";
 
 const customerRouter = Router();
 
@@ -30,13 +31,14 @@ customerRouter.get("/getOrders", async (req, res) => {
 })
 
 customerRouter.post("/placeOrder", async (req, res) => {
-    const dbResponse = await orderDb.add(req.body.order)
+    const order = await orderDb.add(req.body.order)
+    const dbResponse = await createShipment(order);
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
 customerRouter.put("/updateOrder", async (req, res) => {
     const dbResponse = await orderDb.update(req.body.order_id, req.body.newData);
-    res.status(dbResponse[0]).send(dbResponse[1]);
+   res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
 customerRouter.delete("/removeOrder", async (req, res) => {

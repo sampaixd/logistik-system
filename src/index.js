@@ -5,12 +5,14 @@ import storageRouter from "../routes/storage.js";
 import productRouter from "../routes/product.js";
 import customerRouter from "../routes/customer.js";
 import customer from "../schema/customer.js";
+import truckerRouter from "../routes/trucker.js";
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 app.use("/worker", workerRouter);
+app.use("/trucker", truckerRouter);
 app.use("/storage", storageRouter);
 app.use("/product", productRouter);
 app.use("/customer", customerRouter);

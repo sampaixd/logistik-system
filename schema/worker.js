@@ -10,6 +10,12 @@ const workerSchema = mongoose.Schema({
     schedule: {
         type: schedule.schema,
         required: [true, "schedule required"]
+    },
+    storages_id: {
+        type: [mongoose.Types.ObjectId]
+    },
+    shipments_id: {
+        type: [mongoose.Types.ObjectId]
     }
 })
 
