@@ -2,7 +2,10 @@ import { stringifyStyle } from "@vue/shared";
 import mongoose, { Schema } from "mongoose";
 
 const sheduleSchema = new mongoose.Schema({
-    monday: {
+    workdays[{
+
+    }]
+    monday: {   // TODO asign shipment id for days
         start: {
             type: String,
             maxlength: [5, "Invalid time format"],

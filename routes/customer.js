@@ -33,6 +33,9 @@ customerRouter.get("/getOrders", async (req, res) => {
 customerRouter.post("/placeOrder", async (req, res) => {
     const order = await orderDb.add(req.body.order)
     const dbResponse = await createShipment(order);
+    if (dbResponse[0] === 400) {
+        orderDb.remove(order);
+    }
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 

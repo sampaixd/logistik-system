@@ -41,39 +41,54 @@ export async function remove(id) {
 }
 
 export async function createShipment(orders) {
-
-    return await Storage.find({
-            "products.id": orders.id,
-    }, async function (err, suitableStorages) {
-
-        console.log(suitableStorages);
-        suitableStorages.filter((storage) => {
-            storage.products.foreach((product) => {
-                let currentProduct = ""
-                // if the current product is the product searched for,
-                //asign the product to currentProduct and continue in if statement
-                if ((currentProduct = orders.find((orderedProduct) => {
-                    orderedProduct.id === product.id}))) {
-                    return product.stock >= currentProduct.amount ? true : false; 
-                } 
-            })
-        })
-    
-        if (suitableStorages.length) {
-            let ordersId = []
-            orders.foreach((order) => { ordersId.push(order.id)})
-            shipmentDbCreate({
-                orders_id: ordersId,
-                workers_id: suitableStorages[0].workers_id[0],
-                trucker_id: "63480375455c8e9b80517d30",
-                storage_id: suitableStorages[0].id
-            })
-            return [200, "order added!"]
-        } else {
-            return [400, "could not add order"]
-        }
+    let errorMessage = "";
+    let suitableStorages = await Storage.find({
+        "products.id": orders.product_id,
     });
+    if (!suitableStorages.length) {
+        errorMessage = "could not find storage with product avalible"
+    }
+    console.log(suitableStorages);
+    suitableStorages = getAllStoragesWithSufficientStock(suitableStorages, orders);
     
+
+    if (suitableStorages.length) {
+        //let ordersId = []
+        //orders.foreach((order) => { ordersId.push(order.id) })
+        shipmentDbCreate({
+            orders_id: orders._id,
+            workers_id: suitableStorages[0].workers_id[0],
+            trucker_id: "63480375455c8e9b80517d30",
+            storage_id: suitableStorages[0].id
+        })
+        return [200, "order added!"]
+    } else {
+        if (!errorMessage.length) {
+            errorMessage = "no storage with sufficient stock avalible"
+        }
+        return [400, errorMessage]
+    }
+
+
+
+}
+
+function getAllStoragesWithSufficientStock(storages, order) {
+    return suitableStorages.filter((storage) => {
+
+        let hasEnoughStock = false;
+        storage.products.forEach((product) => {
+            if (hasEnoughStock) { return }
+            // if the current product is the product searched for,
+            //asign the product to currentProduct and continue in if statement
+            if (orders.product_id.equals(product.id)) {
+                console.log(`sufficient stock: ${product.stock >= orders.amount}`)
+                hasEnoughStock = product.stock >= orders.amount ? true : false;
+            }
+        })
+        console.log(hasEnoughStock);
+        return hasEnoughStock;
+    })
 }
 
 export async function asignWorker(storage_id, worker_id) {
@@ -83,7 +98,7 @@ export async function asignWorker(storage_id, worker_id) {
         storage.save();
         return [200, "worker assigned to storage"]
     }
-    catch(err) {
+    catch (err) {
         return [400, `error assigning worker to storage: ${err}`]
     }
 }
@@ -91,16 +106,16 @@ export async function asignWorker(storage_id, worker_id) {
 export async function relieveWorker(storage_id, worker_id) {
     try {
         const storage = await Storage.findById(storage_id);
-        storage.workers_id.pull({_id: worker_id});
+        storage.workers_id.pull({ _id: worker_id });
         storage.save();
         return [200, "worker relieved from storage"];
     }
-    catch(err) {
+    catch (err) {
         return [400, `error relieving worker: ${err}`]
     }
 }
 
 export async function updateShipment(shipment_id, newOrder) {
-    
+
 }
 //TODO add products, workers, shipments
