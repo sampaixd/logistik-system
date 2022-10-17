@@ -2,10 +2,7 @@ import { stringifyStyle } from "@vue/shared";
 import mongoose, { Schema } from "mongoose";
 
 const sheduleSchema = new mongoose.Schema({
-    workdays[{
-
-    }]
-    monday: {   // TODO asign shipment id for days
+    monday: { 
         start: {
             type: String,
             maxlength: [5, "Invalid time format"],
@@ -15,6 +12,10 @@ const sheduleSchema = new mongoose.Schema({
             type: String,
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
+        },
+        asigned_Shipment: {
+            type: mongoose.Types.ObjectId,
+            default: undefined
         }
     },
 
@@ -28,6 +29,10 @@ const sheduleSchema = new mongoose.Schema({
             type: String,
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
+        },
+        asigned_Shipment: {
+            type: mongoose.Types.ObjectId,
+            default: undefined
         }
     },
 
@@ -41,6 +46,10 @@ const sheduleSchema = new mongoose.Schema({
             type: String,
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
+        },
+        asigned_Shipment: {
+            type: mongoose.Types.ObjectId,
+            default: undefined
         }
     },
 
@@ -54,6 +63,10 @@ const sheduleSchema = new mongoose.Schema({
             type: String,
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
+        },
+        asigned_Shipment: {
+            type: mongoose.Types.ObjectId,
+            default: undefined
         }
     },
 
@@ -67,6 +80,10 @@ const sheduleSchema = new mongoose.Schema({
             type: String,
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
+        },
+        asigned_Shipment: {
+            type: mongoose.Types.ObjectId,
+            default: undefined
         }
     },
 
@@ -80,6 +97,10 @@ const sheduleSchema = new mongoose.Schema({
             type: String,
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
+        },
+        asigned_Shipment: {
+            type: mongoose.Types.ObjectId,
+            default: undefined
         }
     },
 
@@ -93,8 +114,12 @@ const sheduleSchema = new mongoose.Schema({
             type: String,
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
+        },
+        asigned_Shipment: {
+            type: mongoose.Types.ObjectId,
+            default: undefined
         }
-    },
+    }
 })
 
 export default mongoose.model("Schedule", sheduleSchema)
