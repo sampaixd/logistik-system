@@ -8,7 +8,7 @@ import customer from "../schema/customer.js";
 import truckerRouter from "../routes/trucker.js";
 
 const app = express();
-const port = 3000;
+const port = 3012;
 
 app.use(express.json());
 app.use("/worker", workerRouter);

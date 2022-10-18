@@ -51,15 +51,15 @@ export async function createShipment(orders) {
         "products.id": orders.product_id,
     });
     if (!suitableStorages.length) {
-        errorMessage = "could not find storage with product avalible"
+        return [400, "Storage error! Could not find storage with product avalible"]
     }
-    console.log(suitableStorages);
+    console.log("BALLS");
     suitableStorages = getAllStoragesWithSufficientStock(suitableStorages, orders);
     let shipmentId_SelectedStorageAndStaffId = []
     try {
         shipmentId_SelectedStorageAndStaffId = getMostSuitableStorage(suitableStorages);
-    } catch(err) {
-        return [400, err];
+    } catch (err) {
+        return [400, err.message];
     }
     const shipmentId = shipmentId_SelectedStorageAndStaffId[0];
     const selectedStorage = shipmentId_SelectedStorageAndStaffId[1];
@@ -86,8 +86,8 @@ export async function createShipment(orders) {
 }
 
 
-function getAllStoragesWithSufficientStock(storages, order) {
-    return suitableStorages.filter((storage) => {
+function getAllStoragesWithSufficientStock(storages, orders) {
+    return storages.filter((storage) => {
 
         let hasEnoughStock = false;
         storage.products.forEach((product) => {
@@ -99,14 +99,31 @@ function getAllStoragesWithSufficientStock(storages, order) {
                 hasEnoughStock = product.stock >= orders.amount ? true : false;
             }
         })
-        console.log(hasEnoughStock);
+        console.log("BALLS 2");
         return hasEnoughStock;
     })
 }
 
 function getMostSuitableStorage(storages) {
 
-    mostSuitableStorage = storages[0];  // will default to the first storage
+    const suitableShipmentAndStorage = lookForStorageWithExistingShipment(storages);
+
+    // suitableShipmentAndStorage[0] will be empty string if no existing shipment was found
+    if (suitableShipmentAndStorage[0]) {
+        return suitableShipmentAndStorage
+    } else {
+        try {
+            return findStorageWithSuitableWorkerAndTrucker(storages);
+        } catch (err) {
+            throw err;
+        }
+    }
+}
+
+
+
+function lookForStorageWithExistingShipment(storages) {
+    let mostSuitableStorage = storages[0];  // will default to the first storage
     let availableShipment_id = "";
     storages.forEach((storage, index) => {
         if (availableShipment_id) { return }
@@ -117,30 +134,7 @@ function getMostSuitableStorage(storages) {
             }
         }
     })
-    // first return parameter tells the program if it found an existing shipment
-    if (availableShipment_id) {
-        return [availableShipment_id, mostSuitableStorage]
-    } else {
-        let availableWorkerAndTruckerId = [];
-        let selectedStorage = "";
-        storages.forEach((storage) => {
-            if (selectedStorage) { return }
-            try {
-                availableWorkerAndTruckerId = GetAvailableStaff(storage);
-                selectedStorage = storage;
-            } catch (err) {
-                availableWorkerAndTruckerId = [];
-                selectedStorage = "";
-            }
-
-            if (availableWorkerAndTruckerId) {
-                return [false, selectedStorage, availableWorkerAndTruckerId];
-            }
-
-
-        })
-    }
-
+    return [availableShipment_id, mostSuitableStorage]
 }
 
 function lookForExistingShipment(shipments_id) {
@@ -158,9 +152,37 @@ function lookForExistingShipment(shipments_id) {
     })
 }
 
+function findStorageWithSuitableWorkerAndTrucker(storages) {
+    let availableWorkerAndTruckerId = [];
+    let selectedStorage = "";
+    storages.forEach((storage) => {
+        if (selectedStorage) { return }
+        try {
+            availableWorkerAndTruckerId = GetAvailableStaff(storage);
+            selectedStorage = storage;
+        } catch (err) {
+            //availableWorkerAndTruckerId = [];
+            //selectedStorage = "BALLS";
+        }
+    });
+    console.log(`worker and trucker id: ${availableWorkerAndTruckerId}`)
+    if (!availableWorkerAndTruckerId[0] && !availableWorkerAndTruckerId[1]) {
+        throw new StorageError("Storage error! Could not find worker or trucker");
+    } else if (!availableWorkerAndTruckerId[0]) {
+        throw new StorageError("Storage error! Could not find worker");
+    } else if (!availableWorkerAndTruckerId[1]) {
+        throw new StorageError("Storage error! Could not find trucker");
+    } else {
+        return [false, selectedStorage, availableWorkerAndTruckerId];
+    }
+}
+
+
 function GetAvailableStaff(storage) {
     try {
-
+        const worker_id = findSuitableWorker(storage);
+        const trucker_id = findSuitableTrucker();
+        return [worker_id, trucker_id];
     } catch (err) {
         switch (typeof (err)) {
             case "AvailableWorkerNotFoundError":
@@ -172,7 +194,7 @@ function GetAvailableStaff(storage) {
         }
     }
 }
-
+// returns worker id
 function findSuitableWorker(storage) {
     const packagingDay = getDayToString((new Date().getDay() + 1) % 7);
     let availableWorker_id = ""
@@ -197,7 +219,7 @@ function findSuitableWorker(storage) {
     }
     throw new AvailableWorkerNotFoundError("unable to find available worker");
 }
-
+//returns trucker id
 function findSuitableTrucker() {
     let availableTrucker_id = ""
     const shippingDay = getDayToString((new Date().getDay() + 2) % 7)
@@ -238,7 +260,7 @@ function getDayToString(dayInt) {
         case 6:
             return "sunday";
         default:
-            console.log("invalid day format, number must be between 0-6");
+            console.log("BALLS");
             return "error";
     }
 
