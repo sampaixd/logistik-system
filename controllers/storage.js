@@ -46,18 +46,16 @@ export async function remove(id) {
 }
 
 export async function createShipment(orders) {
-    let errorMessage = "";
     let suitableStorages = await Storage.find({
         "products.id": orders.product_id,
     });
     if (!suitableStorages.length) {
         return [400, "Storage error! Could not find storage with product avalible"]
     }
-    console.log("BALLS");
     suitableStorages = getAllStoragesWithSufficientStock(suitableStorages, orders);
     let shipmentId_SelectedStorageAndStaffId = []
     try {
-        shipmentId_SelectedStorageAndStaffId = getMostSuitableStorage(suitableStorages);
+        shipmentId_SelectedStorageAndStaffId = await getMostSuitableStorage(suitableStorages);
     } catch (err) {
         return [400, err.message];
     }
@@ -78,11 +76,7 @@ export async function createShipment(orders) {
             storage_id: selectedStorage.id
         })
         return [200, "order added!"]
-    } /*else {
-        if (!errorMessage.length) {
-            errorMessage = "no storage with sufficient stock avalible"
-        }
-        return [400, errorMessage]*/
+    }
 }
 
 
@@ -104,7 +98,7 @@ function getAllStoragesWithSufficientStock(storages, orders) {
     })
 }
 
-function getMostSuitableStorage(storages) {
+async function getMostSuitableStorage(storages) {
 
     const suitableShipmentAndStorage = lookForStorageWithExistingShipment(storages);
 
@@ -113,7 +107,7 @@ function getMostSuitableStorage(storages) {
         return suitableShipmentAndStorage
     } else {
         try {
-            return findStorageWithSuitableWorkerAndTrucker(storages);
+            return await findStorageWithSuitableWorkerAndTrucker(storages);
         } catch (err) {
             throw err;
         }
@@ -163,6 +157,7 @@ function findStorageWithSuitableWorkerAndTrucker(storages) {
         } catch (err) {
             //availableWorkerAndTruckerId = [];
             //selectedStorage = "BALLS";
+            console.log(`error getting staff: ${err}`);
         }
     });
     console.log(`worker and trucker id: ${availableWorkerAndTruckerId}`)
@@ -184,7 +179,8 @@ function GetAvailableStaff(storage) {
         const trucker_id = findSuitableTrucker();
         return [worker_id, trucker_id];
     } catch (err) {
-        switch (typeof (err)) {
+        console.log(err);
+        switch (err.type) {
             case "AvailableWorkerNotFoundError":
                 throw new StorageError(`Storage error: ${err}`);
             case "AvailableTruckerNotFoundError":
@@ -201,12 +197,14 @@ function findSuitableWorker(storage) {
     if (packagingDay === "error") {
         return "invalid asignment for weekday"
     }
-    storage.workers_id.forEach((worker_id) => {
-        if (!availableWorker_id) { return }
-
+    console.log(`all workers: ${storage.workers_id}`);
+    storage.workers_id.forEach((worker_id, index) => {
+        if (availableWorker_id) { return }
+        console.log(`${index} : ${worker_id}`)
         workerDb.get({ _id: worker_id })
             .then((worker) => {
-                if (typeof (worker.schedule[packagingDay].asigned_Shipment) == undefined) {
+                console.log(worker[1]);
+                if (typeof (worker[1][0]["schedule"][packagingDay]["asigned_Shipment"]) == undefined) {
                     availableWorker_id = worker._id;
                 }
             })
@@ -214,10 +212,11 @@ function findSuitableWorker(storage) {
                 throw new AvailableWorkerNotFoundError(`error finding suitable workers: ${err}`);
             })
     })
+    console.log("test 2");
     if (availableWorker_id) {
         return availableWorker_id;
     }
-    throw new AvailableWorkerNotFoundError("unable to find available worker");
+    throw new AvailableWorkerNotFoundError("no available worker");
 }
 //returns trucker id
 function findSuitableTrucker() {
@@ -228,7 +227,7 @@ function findSuitableTrucker() {
             truckers.forEach((trucker) => {
                 if (availableTrucker_id) { return }
 
-                if (typeof (trucker.schedule[shippingDay].asigned_Shipment) == undefined) {
+                if (typeof (trucker.schedule.shippingDay.asigned_Shipment) == undefined) {
                     availableTrucker_id = trucker._id;
                 }
             })
@@ -240,11 +239,11 @@ function findSuitableTrucker() {
     if (availableTrucker_id) {
         return availableTrucker_id;
     }
-    throw new AvailableTruckerNotFoundError("could not find available trucker")
+    throw new AvailableTruckerNotFoundError("no available trucker")
 }
 
 function getDayToString(dayInt) {
-    switch (packagingDay) {
+    switch (dayInt) {
         case 0:
             return "monday";
         case 1:
