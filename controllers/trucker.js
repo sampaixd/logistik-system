@@ -1,5 +1,4 @@
 import Trucker from "../schema/trucker.js";
-import Order from "../schema/order.js";
 export async function get(filter = {}) {
     try {
         return [200, await Trucker.find(filter)]

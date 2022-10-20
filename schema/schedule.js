@@ -13,9 +13,9 @@ const sheduleSchema = new mongoose.Schema({
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
         },
-        asigned_Shipment: {
+        asignedShipment: {
             type: mongoose.Types.ObjectId,
-            default: undefined
+            default: null
         }
     },
 
@@ -30,9 +30,9 @@ const sheduleSchema = new mongoose.Schema({
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
         },
-        asigned_Shipment: {
+        asignedShipment: {
             type: mongoose.Types.ObjectId,
-            default: undefined
+            default: null
         }
     },
 
@@ -47,9 +47,9 @@ const sheduleSchema = new mongoose.Schema({
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
         },
-        asigned_Shipment: {
+        asignedShipment: {
             type: mongoose.Types.ObjectId,
-            default: undefined
+            default: null
         }
     },
 
@@ -64,9 +64,9 @@ const sheduleSchema = new mongoose.Schema({
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
         },
-        asigned_Shipment: {
+        asignedShipment: {
             type: mongoose.Types.ObjectId,
-            default: undefined
+            default: null
         }
     },
 
@@ -81,9 +81,9 @@ const sheduleSchema = new mongoose.Schema({
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
         },
-        asigned_Shipment: {
+        asignedShipment: {
             type: mongoose.Types.ObjectId,
-            default: undefined
+            default: null
         }
     },
 
@@ -98,9 +98,9 @@ const sheduleSchema = new mongoose.Schema({
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
         },
-        asigned_Shipment: {
+        asignedShipment: {
             type: mongoose.Types.ObjectId,
-            default: undefined
+            default: null
         }
     },
 
@@ -115,9 +115,9 @@ const sheduleSchema = new mongoose.Schema({
             maxlength: [5, "Invalid time format"],
             minlength: [5, "Invalid time format"]
         },
-        asigned_Shipment: {
+        asignedShipment: {
             type: mongoose.Types.ObjectId,
-            default: undefined
+            default: null
         }
     }
 })
