@@ -1,5 +1,5 @@
 import Storage from "../schema/storage.js";
-import { add as shipmentDbCreate, get as shipmentDbGet } from "./shipment.js";
+import { add as shipmentDbCreate, get as shipmentDbGet, addOrder as addOrderToShipment } from "./shipment.js";
 import * as workerDb from "./worker.js"
 import * as truckerDb from "./trucker.js"
 import { AvailableWorkerNotFoundError } from "../error/AvailableWorkerNotFoundError.js";
@@ -65,10 +65,13 @@ export async function createShipment(orders) {
     }
     const shipmentId = shipmentId_SelectedStorageAndStaffId[0];
     const selectedStorage = shipmentId_SelectedStorageAndStaffId[1];
+    console.log(`shipment id and selected storage: ${shipmentId_SelectedStorageAndStaffId}`);
 
     if (shipmentId) {
         console.log("existing shipment found");
-    } else {
+        return addOrderToShipment(shipmentId, orders._id);
+    } 
+    else {
         const worker_id = shipmentId_SelectedStorageAndStaffId[2][0];
         const trucker_id = shipmentId_SelectedStorageAndStaffId[2][1];
         //let ordersId = []
@@ -79,6 +82,7 @@ export async function createShipment(orders) {
             trucker_id: trucker_id,
             storage_id: selectedStorage.id
         });
+        console.log(`new shipment id: ${newShipment}`)
         await addShipment(selectedStorage.id, newShipment._id)
         return [200, "order added!"]
     }
@@ -127,12 +131,14 @@ async function lookForStorageWithExistingShipment(storages) {
     let mostSuitableStorage = storages[0];  // will default to the first storage
     let availableShipment_id = "";
     for (let i = 0; i < storages.length; i++) {
+        console.log("test swag");
         if (availableShipment_id) { continue }
         if (storages[i].shipments_id.length) {
+            console.log(`storage nr ${i} shipments id: ${storages[i].shipments_id}`);
             availableShipment_id = await lookForExistingShipment(storages[i].shipments_id);
             if (availableShipment_id) {
                 console.log("wee 2");
-                mostSuitableStorage = storages[index];
+                mostSuitableStorage = storages[i];
             }
         }
     }
@@ -141,15 +147,19 @@ async function lookForStorageWithExistingShipment(storages) {
 
 async function lookForExistingShipment(shipments_id) {
     const currentDay = new Date().getDay();
-    let availableShipment_id;
-    for (let i = 0; i < shipments_id; i++) {
-        if (availableShipment_id) { return }
+    let availableShipment_id = "";
+    console.log("swag");
+    for (let i = 0; i < shipments_id.length; i++) {
+        console.log("yolo");
+        if (availableShipment_id) { continue }
         let shipment_id = shipments_id[i];
-        await shipmentDbGet({ _id: shipment_id })
-
+        const shipment = await shipmentDbGet({ _id: shipment_id })
+        console.log(`shipment: ${shipment[0].shipping_date}`)
         // shipments are available to change 2 days prior to shipping
-        console.log("day int compare: " + (shipment.shippingDay.toDay() - 2) % 7 === currentDay);
-        if ((shipment.shippingDay.toDay() - 2) % 7 === currentDay) {
+        console.log(`shipping date: ${shipment[0].shipping_date.getDay()}`);
+        console.log(`current date: ${currentDay}`);
+        console.log(`day int compare: ${(shipment[0].shipping_date.getDay() - 2) % 7 === currentDay}`);
+        if ((shipment[0].shipping_date.getDay() - 2) % 7 === currentDay) {
             availableShipment_id = shipment_id;
             console.log("wee 3");
         }
@@ -305,9 +315,6 @@ export async function relieveWorker(storage_id, worker_id) {
 
         return [400, `error relieving worker: ${err}`]
     }
-}
-export async function updateShipment(shipment_id, newOrder) {
-
 }
 
 async function addShipment(id, newShipmentId) {

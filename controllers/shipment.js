@@ -1,22 +1,23 @@
 import Order from "../schema/order.js";
 import Shipment from "../schema/shipment.js";
+import Product from "../schema/product.js";
+import dayjs from "dayjs";
 
 export async function get(filter = {}) {
     try {
-        return [200, await Shipment.find(filter)]
+        return await Shipment.find(filter);
     }
     catch (err) {
-        return [400, `error getting shipments: ${err}`]
+        return `error getting shipments: ${err}`;
     }
 }
 
 export async function add(shipment) {
     try {
-        await Shipment.create(shipment)
-        return [200, "shipment added"]
+        return await Shipment.create(shipment)
     }
     catch (err) {
-        return [400, `error adding shipment: ${err}`]
+        return `error adding shipment: ${err}`
     }
 }
 
@@ -30,35 +31,48 @@ export async function update(id, newData) {
     }
 }
 
-export async function remove (id) {
-    try{
+export async function remove(id) {
+    try {
         await Shipment.findByIdAndDelete(id)
         return [200, "shipment removed"]
     }
-    catch(err) {
+    catch (err) {
         return [400, `error deleting shipment: ${err}`]
+    }
+}
+
+export async function addOrder(shipmentId, orderId) {
+    try {
+        const shipment = await Shipment.findById(shipmentId);
+        shipment.orders_id.push(orderId);
+        shipment.save();
+        return [200, "order added to shipment!"];
+    } catch(err) {
+        return [400, `error adding order to shipment: ${err}`];
     }
 }
 
 
 // unable to test this function at the moment
-export async function getMontlySale(startOfMonth, endOfMonth) {
-    const thisMonthsShipments = await Shipment.find({ 
-        shipment_date: {
-            $gte: startOfMonth,
-            $lte: endOfMonth
-    }});
+export async function getMontlySale(selectedMonth) {
     
+    const thisMonthsShipments = await Shipment.find({
+        shipping_date: {
+            $gte: dayjs().month(selectedMonth).startOf("month"), 
+            $lte: dayjs().month(selectedMonth).endOf("month")
+        },
+        delivered: true
+    });
+    console.log(`this months shipment: ${thisMonthsShipments}`)
     let totalSales = 0;
-    
-    thisMonthsShipments.forEach((shipment) => {
-        shipment.orders_id.forEach((order_id) =>{
-            Order.findById(order_id)
-            .then((order) => {
-                totalSales += order.price * order.amount;
-            })
-        })
-    })
+
+    for (let i = 0; i < thisMonthsShipments.length; i++) {
+        for (let x = 0; x < thisMonthsShipments[i].orders_id.length; x++) {
+            const order = await Order.findById(thisMonthsShipments[i].orders_id[x]);
+            const product = await Product.findById(order.product_id);
+            totalSales += order.amount * product.price;
+        }
+    }
 
     return totalSales
 }

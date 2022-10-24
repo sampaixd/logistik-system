@@ -1,9 +1,9 @@
 import mongoose, { mongo, Schema } from "mongoose";
-
+import dayjs from "dayjs";
 const shipmentSchema = mongoose.Schema({
     shipping_date: {
         type: Date,
-        default: Date.now
+        default: dayjs().add(2, "day")
 
     },
     orders_id: {
