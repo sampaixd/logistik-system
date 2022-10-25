@@ -41,3 +41,14 @@ export async function remove (id) {
         return [400, `error deleting worker: ${err}`]
     }
 }
+
+export async function getAvailableWorkers(selectedDay) {
+    try {
+        return [200, await Worker.find({ 
+            [`schedule.${selectedDay}.asignedShipment`]: null,
+            [`schedule.${selectedDay}.start`]: {$exists: true}  // does not work that day if it doesnt exist
+     })];
+    } catch(err) {
+        return [400, `error finding avaiable workers: ${err}`];
+    }
+}

@@ -9,9 +9,9 @@ export async function get(filter = {}) {
 }
 
 export async function add(trucker, schedule) {
-    
+
     try {
-        await Trucker.create({ name: trucker.name, schedule: schedule})
+        await Trucker.create({ name: trucker.name, schedule: schedule })
         return [200, "trucker added"];
     }
     catch (err) {
@@ -30,7 +30,7 @@ export async function update(id, newData) {
     }
 }
 
-export async function remove (id) {
+export async function remove(id) {
     try {
         await Trucker.findByIdAndDelete(id);
         return [200, "trucker deleted"];
@@ -41,19 +41,30 @@ export async function remove (id) {
 }
 
 export async function asignShipment(trucker_id, shipment_id) {
-    return update(trucker_id, {shipment_id: shipment_id});
+    return update(trucker_id, { shipment_id: shipment_id });
 }
 
 export async function clearShipment(trucker_id) {
-    return update(trucker_id, {shipment_id: null});
+    return update(trucker_id, { shipment_id: null });
 }
 
 export async function asignLocation(trucker_id, location) {
-    return update(trucker_id, {location: location});
+    return update(trucker_id, { location: location });
 }
 
 export async function clearLocation(trucker_id) {
-    return update(trucker_id, {location: null})
+    return update(trucker_id, { location: null })
+}
+
+export async function getAvailableTruckers(selectedDay) {
+    try {
+        return [200, await Trucker.find({ 
+            [`schedule.${selectedDay}.asignedShipment`]: null,
+            [`schedule.${selectedDay}.start`]: {$exists: true}  // does not work that day if it doesnt exist
+     })];
+    } catch(err) {
+        return [400, `error finding avaiable truckers: ${err}`];
+    }
 }
 
 //TODO asign shipment ID, asign location

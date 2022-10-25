@@ -69,4 +69,10 @@ truckerRouter.delete("/delete", async (req, res) => {
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
+truckerRouter.get("/available", async (req, res) => {
+
+    const dbResponse = await db.getAvailableTruckers(req.body.selectedDay);
+    res.status(dbResponse[0]).send(dbResponse[1]);
+})
+
 export default truckerRouter;

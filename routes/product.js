@@ -1,5 +1,6 @@
 import { Router } from "express";
-import * as db from "../controllers/product.js"
+import * as db from "../controllers/product.js";
+import * as storageDb from "../controllers/storage.js";
 
 const productRouter = Router();
 
@@ -22,5 +23,11 @@ productRouter.delete("/delete", async (req, res) => {
     const dbResponse = await db.remove(req.body.id);
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
+
+productRouter.get("/getStocks", async (req, res) => {
+    const dbResponse = await storageDb.findAllStoragesWithProductInStock(req.body.productId);
+    res.status(dbResponse[0]).send(dbResponse[1]);
+}) 
+
 
 export default productRouter

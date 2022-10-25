@@ -69,4 +69,10 @@ workerRouter.delete("/delete", async (req, res) => {
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
+workerRouter.get("/available", async (req, res) => {
+
+    const dbResponse = await db.getAvailableWorkers(req.body.selectedDay);
+    res.status(dbResponse[0]).send(dbResponse[1]);
+})
+
 export default workerRouter;

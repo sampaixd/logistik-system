@@ -5,6 +5,7 @@ import * as truckerDb from "./trucker.js"
 import { AvailableWorkerNotFoundError } from "../error/AvailableWorkerNotFoundError.js";
 import { AvailableTruckerNotFoundError } from "../error/AvailableTruckerNotFoundError.js";
 import { StorageError } from "../error/StorageError.js";
+import { createObjectExpression } from "@vue/compiler-core";
 
 export async function get(filter = {}) {
     try {
@@ -326,5 +327,26 @@ async function addShipment(id, newShipmentId) {
     } catch (err) {
         console.error(`error occured adding shipment to storage: ${err}`);
     }
+}
+
+export async function findAllStoragesWithProductInStock(productId) {
+    try {
+        const storages = await Storage.find({
+        "products.type": productId,
+        "products.stock": {
+            $lge: 1
+        }
+    });
+    return [200, await formatStoragesWithStock(storages)];
+    } catch(err) {
+        return [400, `error getting storages with product in stock: ${err}`];
+    }
+}
+async function formatStoragesWithStock(storages) {
+    let formattedStorages = []
+    storages.forEach((storage) => {
+        formattedStorages.push(`Storage id: ${storage._id} - product stock: ${storage.products.stock}`);
+    })
+    return formattedStorages;
 }
 //TODO add products, workers, shipments

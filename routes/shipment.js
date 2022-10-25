@@ -3,6 +3,17 @@ import { Router } from "express";
 
 const shipmentRouter = Router();
 
+shipmentRouter.get("/get", async (req, res) => {
+    const shipments = await shipmentDb.get();
+    let statusCode = 0;
+    if (typeof(shipment) === String) {
+        statusCode = 400;
+    } else {
+        statusCode = 200;
+    }
+    res.status(statusCode).send(shipments);
+})
+
 shipmentRouter.get("/getMonthlySale", async (req, res) => {
     try {
        res.status(200).send(`total sales this month: ${await shipmentDb.getMontlySale(req.body.monthInt)}`);
@@ -12,7 +23,7 @@ shipmentRouter.get("/getMonthlySale", async (req, res) => {
 })
 
 shipmentRouter.put("/isDelivered", async (req, res) => {
-    const dbResponse = shipmentDb.update(req.body.shipmentId, {delivered: true});
+    const dbResponse = await shipmentDb.update(req.body.shipmentId, {delivered: true});
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
