@@ -27,4 +27,15 @@ shipmentRouter.put("/isDelivered", async (req, res) => {
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
+shipmentRouter.get("/getUnsent", async (req, res) => {
+    const dbResponse = await shipmentDb.get({delivered: false});
+    let statusCode = 0;
+    if (typeof(dbResponse) === String) {
+        statusCode = 400;
+    } else {
+        statusCode = 200;
+    }   
+    res.status(statusCode).send(dbResponse);
+})
+
 export default shipmentRouter;

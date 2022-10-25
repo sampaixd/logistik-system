@@ -332,21 +332,38 @@ async function addShipment(id, newShipmentId) {
 export async function findAllStoragesWithProductInStock(productId) {
     try {
         const storages = await Storage.find({
-        "products.type": productId,
+        "products.id": productId,
         "products.stock": {
-            $lge: 1
+            $gte: 1
         }
     });
-    return [200, await formatStoragesWithStock(storages)];
+    return [200, await formatStoragesWithStock(storages, productId)];
     } catch(err) {
         return [400, `error getting storages with product in stock: ${err}`];
     }
 }
-async function formatStoragesWithStock(storages) {
+
+async function formatStoragesWithStock(storages, productId) {
     let formattedStorages = []
     storages.forEach((storage) => {
-        formattedStorages.push(`Storage id: ${storage._id} - product stock: ${storage.products.stock}`);
+        let product = -1;
+        console.log("storage prod len: " + storage.products.length)
+        for (let i = 0; i < storage.products.length; i++) {
+            console.log("test");
+            console.log(`product id comp in format: ${storage.products[i].id.equals(productId)}`)
+            if (storage.products[i].id.equals(productId)) {   // finds the correct product from all products
+                product = i;
+                break;
+            }
+        }
+        
+        formattedStorages.push(`Storage id: ${storage._id} - product stock: ${storage.products[product].stock}`);
     })
     return formattedStorages;
+}
+
+export async function addProduct(storageId, productId, stock) {
+    const storage = await storage.findById(storageId);
+   // CONTINUE HERE 
 }
 //TODO add products, workers, shipments

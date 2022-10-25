@@ -34,11 +34,8 @@ storageRouter.put("/relieveWorker", async (req, res) => {
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-// TODO work on this when all basic routes are added
-storageRouter.post("/addShipment", async (req, res) => {
-    const dbResponse = await storageDb.createShipment(req.body.shipment)
+storageRouter.post("/addProduct", async (req, res) => {
+    const dbResponse = await 
 })
-
-
 
 export default storageRouter;
