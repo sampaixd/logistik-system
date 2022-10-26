@@ -1,5 +1,6 @@
 import mongoose, { mongo, Schema } from "mongoose";
 import dayjs from "dayjs";
+
 const shipmentSchema = mongoose.Schema({
     shipping_date: {
         type: Date,
@@ -19,9 +20,9 @@ const shipmentSchema = mongoose.Schema({
         type: [mongoose.Types.ObjectId],
         required: [true, "worker(s) required"]
     },
-    delivered: {
-        type: Boolean,
-        default: false
+    status: {
+        type: String,
+        default: "pending"
     },
     storage_id: {
         type: mongoose.Types.ObjectId,

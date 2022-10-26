@@ -6,6 +6,7 @@ import { AvailableWorkerNotFoundError } from "../error/AvailableWorkerNotFoundEr
 import { AvailableTruckerNotFoundError } from "../error/AvailableTruckerNotFoundError.js";
 import { StorageError } from "../error/StorageError.js";
 import { createObjectExpression } from "@vue/compiler-core";
+import product from "../schema/product.js";
 
 export async function get(filter = {}) {
     try {
@@ -71,7 +72,7 @@ export async function createShipment(orders) {
     if (shipmentId) {
         console.log("existing shipment found");
         return addOrderToShipment(shipmentId, orders._id);
-    } 
+    }
     else {
         const worker_id = shipmentId_SelectedStorageAndStaffId[2][0];
         const trucker_id = shipmentId_SelectedStorageAndStaffId[2][1];
@@ -332,13 +333,13 @@ async function addShipment(id, newShipmentId) {
 export async function findAllStoragesWithProductInStock(productId) {
     try {
         const storages = await Storage.find({
-        "products.id": productId,
-        "products.stock": {
-            $gte: 1
-        }
-    });
-    return [200, await formatStoragesWithStock(storages, productId)];
-    } catch(err) {
+            "products.id": productId,
+            "products.stock": {
+                $gte: 1
+            }
+        });
+        return [200, await formatStoragesWithStock(storages, productId)];
+    } catch (err) {
         return [400, `error getting storages with product in stock: ${err}`];
     }
 }
@@ -356,14 +357,36 @@ async function formatStoragesWithStock(storages, productId) {
                 break;
             }
         }
-        
+
         formattedStorages.push(`Storage id: ${storage._id} - product stock: ${storage.products[product].stock}`);
     })
     return formattedStorages;
 }
 
 export async function addProduct(storageId, productId, stock) {
-    const storage = await storage.findById(storageId);
-   // CONTINUE HERE 
+    try {
+        const storage = await Storage.findById(storageId);
+        storage.products.push({
+            id: productId,
+            stock: stock
+        })
+        storage.save();
+        return [200, "product added to storage!"];
+    } catch (err) {
+        return [400, `error adding product to storage: ${err}`];
+    }
+}
+
+export async function addStockToProduct(storageId, productId, additionalStock) {
+    try {
+        const storage = await Storage.findById(storageId);
+        console.log("Storrage: " + storage.products);
+        const product = storage.products.find(product => product.id.equals(productId));
+        product.stock += additionalStock;
+        storage.save();
+        return [200, "stock added to product!"];
+    } catch (err) {
+        return [400, `error adding stock to product: ${err}`];
+    }
 }
 //TODO add products, workers, shipments

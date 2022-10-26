@@ -17,7 +17,7 @@ truckerRouter.post("/add", async (req, res) => {
         validateTime(req.body.schedule.friday, "friday");
         validateTime(req.body.schedule.saturday, "saturday");
         validateTime(req.body.schedule.sunday, "sunday");
-        const dbResponse = await db.add(req.body.worker, req.body.schedule)
+        const dbResponse = await db.add(req.body.trucker, req.body.schedule)
         console.log(dbResponse);
         res.status(dbResponse[0]).send(dbResponse[1]);
     }

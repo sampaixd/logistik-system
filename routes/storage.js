@@ -35,7 +35,13 @@ storageRouter.put("/relieveWorker", async (req, res) => {
 })
 
 storageRouter.post("/addProduct", async (req, res) => {
-    const dbResponse = await 
+    const dbResponse = await storageDb.addProduct(req.body.storageId, req.body.productId, req.body.stock);
+    res.status(dbResponse[0]).send(dbResponse[1]);
+})
+
+storageRouter.put("/addStock", async (req, res) => {
+    const dbResponse = await storageDb.addStockToProduct(req.body.storageId, req.body.productId, req.body.additionalStock)
+    res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
 export default storageRouter;
