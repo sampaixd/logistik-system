@@ -14,6 +14,11 @@ shipmentRouter.get("/get", async (req, res) => {
     res.status(statusCode).send(shipments);
 })
 
+shipmentRouter.put("/update", async (req, res) => {
+    const dbResponse = await shipmentDb.update(req.body.id, req.body.newData)
+    res.status(dbResponse[0]).send(dbResponse[1]);
+})
+
 shipmentRouter.get("/getMonthlySale", async (req, res) => {
     try {
        res.status(200).send(await shipmentDb.getMontlySale(req.body.monthInt));

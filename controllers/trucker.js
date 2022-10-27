@@ -22,7 +22,7 @@ export async function add(trucker, schedule) {
 // newdata includes both the variable name as well as its value
 export async function update(id, newData) {
     try {
-        await Trucker.findOneById(id).update(newData);
+        await Trucker.findById(id).update(newData);
         return [200, "trucker updated"];
     }
     catch (err) {

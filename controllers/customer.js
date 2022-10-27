@@ -23,7 +23,7 @@ export async function add(customer) {
 // newdata includes both the variable name as well as its value
 export async function update(id, newData) {
     try {
-        await Customer.findOneById(id).update(newData);
+        await Customer.findById(id).update(newData);
         return [200, "customer updated"];
     }
     catch (err) {
