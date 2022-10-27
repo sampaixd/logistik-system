@@ -24,22 +24,22 @@ storageRouter.delete("/delete", async (req, res) => {
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-storageRouter.put("/asignWorker", async (req, res) => {
+storageRouter.put("/worker/asign", async (req, res) => {
     const dbResponse = await storageDb.asignWorker(req.body.storage_id, req.body.worker_id);
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-storageRouter.put("/relieveWorker", async (req, res) => {
+storageRouter.put("/worker/relieve", async (req, res) => {
     const dbResponse = await storageDb.relieveWorker(req.body.storage_id, req.body.worker_id);
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-storageRouter.post("/addProduct", async (req, res) => {
+storageRouter.post("/product/add", async (req, res) => {
     const dbResponse = await storageDb.addProduct(req.body.storageId, req.body.productId, req.body.stock);
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-storageRouter.put("/addStock", async (req, res) => {
+storageRouter.put("/product/stock/add", async (req, res) => {
     const dbResponse = await storageDb.addStockToProduct(req.body.storageId, req.body.productId, req.body.additionalStock)
     res.status(dbResponse[0]).send(dbResponse[1]);
 })

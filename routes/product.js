@@ -24,7 +24,7 @@ productRouter.delete("/delete", async (req, res) => {
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-productRouter.get("/getStocks", async (req, res) => {
+productRouter.get("/stock/get", async (req, res) => {
     const dbResponse = await storageDb.findAllStoragesWithProductInStock(req.body.productId);
     res.status(dbResponse[0]).send(dbResponse[1]);
 }) 

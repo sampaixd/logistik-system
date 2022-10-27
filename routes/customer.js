@@ -25,12 +25,12 @@ customerRouter.delete("/delete", async (req, res) => {
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-customerRouter.get("/getOrders", async (req, res) => {
+customerRouter.get("/order/get", async (req, res) => {
     const dbResponse = await orderDb.get({customer_id: req.body.customer_id})
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-customerRouter.post("/placeOrder", async (req, res) => {
+customerRouter.post("/order/place", async (req, res) => {
     const order = await orderDb.add(req.body.order)
     const dbResponse = await createShipment(order);
     if (dbResponse[0] === 400) {
@@ -39,12 +39,12 @@ customerRouter.post("/placeOrder", async (req, res) => {
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-customerRouter.put("/updateOrder", async (req, res) => {
+customerRouter.put("/order/update", async (req, res) => {
     const dbResponse = await orderDb.update(req.body.order_id, req.body.newData);
    res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-customerRouter.delete("/removeOrder", async (req, res) => {
+customerRouter.delete("/order/delete", async (req, res) => {
     const dbResponse = await orderDb.remove(req.body.order_id);
     res.status(dbResponse[0]).send(dbResponse[1]);
 })

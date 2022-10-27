@@ -31,7 +31,7 @@ const customerSchema = new mongoose.Schema({
     }
 })
 
-customerSchema.pre("save", async function (next) {
+customerSchema.pre("save", async function (next) {  // pretty sure this doesnt work, dont know why
     await crypt.hash(this.password, 10);
     next();
 })

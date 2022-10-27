@@ -19,7 +19,7 @@ shipmentRouter.put("/update", async (req, res) => {
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-shipmentRouter.get("/getMonthlySale", async (req, res) => {
+shipmentRouter.get("/monthly-sale/get", async (req, res) => {
     try {
        res.status(200).send(await shipmentDb.getMontlySale(req.body.monthInt));
     } catch(err) {
@@ -27,7 +27,7 @@ shipmentRouter.get("/getMonthlySale", async (req, res) => {
     }
 })
 
-shipmentRouter.put("/setStatus", async (req, res) => {
+shipmentRouter.put("/status/get", async (req, res) => {
     if (req.body.status !== "pending" && req.body.status !== "packaged" && req.body.status !== "delivered") {
         res.status(400).send("invalid status");
         return;
@@ -36,7 +36,7 @@ shipmentRouter.put("/setStatus", async (req, res) => {
     res.status(dbResponse[0]).send(dbResponse[1]);
 })
 
-shipmentRouter.get("/getPending", async (req, res) => {
+shipmentRouter.get("/pending/get", async (req, res) => {
     const dbResponse = await shipmentDb.get({status: "pending"});
     let statusCode = 0;
     if (typeof(dbResponse) === String) {
@@ -47,7 +47,7 @@ shipmentRouter.get("/getPending", async (req, res) => {
     res.status(statusCode).send(dbResponse);
 })
 
-shipmentRouter.get("/getPackaged", async (req, res) => {
+shipmentRouter.get("/packaged/get", async (req, res) => {
     const dbResponse = await shipmentDb.get({status: "packaged"});
     let statusCode = 0;
 
